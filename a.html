@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سایت رحمته قدس</title>
+</head>
+<body>
+
+    <h2>ارسال نمره به معلم</h2>
+
+    <form action="http://pouyan.fit.ahoseyn.com/process_grade" method="post" onsubmit="return submitForm()">
+        <label for="teacherName">نام معلم:</label>
+        <input type="text" id="teacherName" name="teacherName" required><br>
+
+        <label for="grade">نمره (از ۱ تا ۲۰):</label>
+        <input type="number" id="grade" name="grade" min="1" max="20" required><br>
+
+        <label for="subject">درس:</label>
+        <select id="subject" name="subject">
+            <option value="technology">کارو فناوری</option>
+            <option value="persian">فارسی</option>
+            <option value="math">ریاضی</option>
+            <option value="science">علوم</option>
+            <option value="social">اجتماعی</option>
+            <option value="critical-thinking">تفکر</option>
+            <option value="physical-education">ورزش</option>
+            <option value="arabic">عربی</option>
+            <option value="art">هنر</option>
+            <option value="language">زبان</option>
+        </select><br>
+
+        <input type="submit" value="ارسال نمره">
+    </form>
+
+    <!-- جداول برای هر معلم -->
+    <div id="teacherTables"></div>
+
+    <script>
+        let gradesByTeacher = {};
+
+        function submitForm() {
+            const teacherName = document.getElementById('teacherName').value;
+            const grade = parseInt(document.getElementById('grade').value);
+            const subject = document.getElementById('subject').value;
+
+            if (!gradesByTeacher[teacherName]) {
+                gradesByTeacher[teacherName] = {};
+            }
+
+            if (!gradesByTeacher[teacherName][subject]) {
+                gradesByTeacher[teacherName][subject] = [];
+            }
+
+            gradesByTeacher[teacherName][subject].push(grade);
+
+            // به‌روزرسانی جدول و میانگین
+            updateTables();
+            
+            return false; // تا بروزرسانی صفحه، فرم ارسال نشود
+        }
+
+        function updateTables() {
+            const teacherTables = document.getElementById('teacherTables');
+            teacherTables.innerHTML = '';
+
+            for (const teacherName in gradesByTeacher) {
+                const teacherGrades = gradesByTeacher[teacherName];
+
+                const table = document.createElement('table');
+                table.innerHTML = `<h3>${teacherName}</h3>`;
+                table.innerHTML += '<thead><tr><th>نمره</th></tr></thead><tbody></tbody>';
+
+                const tableBody = table.getElementsByTagName('tbody')[0];
+
+                for (const subject in teacherGrades) {
+                    const newRow = tableBody.insertRow();
+                    const newCell = newRow.insertCell(0);
+                    newCell.textContent = `${subject}: ${teacherGrades[subject].join(', ')}`;
+                }
+
+                teacherTables.appendChild(table);
+            }
+        }
+    </script>
+<a href="https://adminesite.com/training/html-css/">آموزش HTML و CSS</a>
+</body>
+</html>
